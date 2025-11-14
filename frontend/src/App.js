@@ -3,6 +3,7 @@ import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import Statistics from "./pages/Statistics";
 import CreateCitizenPage from "./pages/CreateCitizenPage";
+import FeedbackPage from "./pages/FeedbackPage";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -14,6 +15,7 @@ function App() {
         {currentPage === "home" && <Home />}
         {currentPage === "stats" && <Statistics />}
         {currentPage === "create" && <CreateCitizenPage />}
+        {currentPage === "feedback" && <FeedbackPage />}
       </div>
     </div>
   );

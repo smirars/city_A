@@ -25,6 +25,13 @@ export default function Sidebar({ currentPage, setCurrentPage }) {
         ✏️
       </button>
 
+      <button
+        style={{ marginTop: "20px" }}
+        onClick={() => setCurrentPage("feedback")}
+      >
+        ✉️
+      </button>
+
     </div>
   );
 }
