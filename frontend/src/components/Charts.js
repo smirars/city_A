@@ -10,6 +10,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  LineChart,
+  Line,
 } from "recharts";
 import { fetchStatistics } from "../api/citizens";
 
@@ -22,6 +24,7 @@ export default function Charts() {
     schools: [],
     universities: [],
     ages: [],
+    birthYears: [],
   });
 
   useEffect(() => {
@@ -70,6 +73,28 @@ export default function Charts() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      <div style={{ marginTop: "40px" }}>
+        <h3>Распределение по годам рождения</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={stats.birthYears}>
+            <XAxis dataKey="year" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line
+              type="monotone"
+              dataKey="count"
+              stroke="#0088FE"
+              strokeWidth={3}
+              dot={{ r: 4 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+
     </div>
   );
 }

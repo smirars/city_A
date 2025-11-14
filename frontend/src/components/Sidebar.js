@@ -18,6 +18,13 @@ export default function Sidebar({ currentPage, setCurrentPage }) {
         🏠
       </button>
       <button onClick={() => setCurrentPage("stats")}>📊</button>
+      <button
+        style={{ marginTop: "20px" }}
+        onClick={() => setCurrentPage("create")}
+      >
+        ✏️
+      </button>
+
     </div>
   );
 }

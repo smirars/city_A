@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "./components/Sidebar";
 import Home from "./pages/Home";
 import Statistics from "./pages/Statistics";
+import CreateCitizenPage from "./pages/CreateCitizenPage";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -12,6 +13,7 @@ function App() {
       <div style={{ flex: 1 }}>
         {currentPage === "home" && <Home />}
         {currentPage === "stats" && <Statistics />}
+        {currentPage === "create" && <CreateCitizenPage />}
       </div>
     </div>
   );

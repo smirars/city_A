@@ -12,7 +12,6 @@ async function initDatabase() {
   if (fs.existsSync(dbPath)) fs.rmSync(dbPath);
 
   const schemaPath = path.join(__dirname, "schema.sql");
-
   if (!fs.existsSync(schemaPath)) {
     console.error(`Файл схемы не найден: ${schemaPath}`);
     process.exit(1);
@@ -73,12 +72,48 @@ async function initDatabase() {
       school_id: faker.helpers.maybe(() => faker.number.int({ min: 1, max: schools.length }), { probability: 0.2 }),
       university_id: faker.helpers.maybe(() => faker.number.int({ min: 1, max: universities.length }), { probability: 0.4 }),
       district_id: faker.number.int({ min: 1, max: districts.length }),
+      parents: null,
+      spouse: null,
+      children: null,
     });
   }
 
   await db("citizens").insert(citizens);
 
-  console.log("Test data inserted");
+  console.log("Citizens inserted");
+
+  const allCitizens = await db("citizens").select("id", "gender");
+
+  for (let i = 0; i < allCitizens.length; i++) {
+    const person = allCitizens[i];
+
+    if (Math.random() < 0.15 && !person.spouse) {
+      const potential = faker.helpers.arrayElement(allCitizens.filter(c => c.id !== person.id && !c.spouse));
+      if (potential) {
+        await db("citizens").where("id", person.id).update({ spouse: potential.id });
+        await db("citizens").where("id", potential.id).update({ spouse: person.id });
+      }
+    }
+
+    if (Math.random() < 0.1) {
+      const childrenCount = faker.number.int({ min: 1, max: 3 });
+      const children = faker.helpers.arrayElements(allCitizens.filter(c => c.id !== person.id), childrenCount);
+
+      for (const child of children) {
+        await db("citizens")
+          .where("id", child.id)
+          .update({
+            parents: JSON.stringify([...(JSON.parse(child.parents || "[]")), person.id]),
+          });
+      }
+
+      await db("citizens")
+        .where("id", person.id)
+        .update({ children: JSON.stringify(children.map(c => c.id)) });
+    }
+  }
+
+  console.log("Relationships added");
   process.exit(0);
 }
 

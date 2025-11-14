@@ -40,8 +40,12 @@ CREATE TABLE citizens (
   school_id INTEGER,
   university_id INTEGER,
   district_id INTEGER,
+  parents TEXT,  
+  spouse INTEGER,
+  children TEXT,
   FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
   FOREIGN KEY (school_id) REFERENCES schools(id) ON DELETE SET NULL,
   FOREIGN KEY (university_id) REFERENCES universities(id) ON DELETE SET NULL,
-  FOREIGN KEY (district_id) REFERENCES districts(id) ON DELETE SET NULL
+  FOREIGN KEY (district_id) REFERENCES districts(id) ON DELETE SET NULL,
+  FOREIGN KEY (spouse) REFERENCES citizens(id) ON DELETE SET NULL
 );
