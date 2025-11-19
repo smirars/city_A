@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Statistics from "./pages/Statistics";
 import CreateCitizenPage from "./pages/CreateCitizenPage";
 import FeedbackPage from "./pages/FeedbackPage";
+import "./App.css"
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");

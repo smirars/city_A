@@ -1,0 +1,38 @@
+.charts-page {
+  padding: 30px 40px;
+  color: #e9ecf5;
+  background: #1a1f3c;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.charts-page__title {
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #ffffff;
+}
+
+.chart-card {
+  background: #202540;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
+}
+
+.chart-card__title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #dce0f2;
+}
+
+.chart-card__content {
+  height: 300px;
+}
+
+@media (max-width: 600px) {
+    .charts-page__title {
+        padding-left: 60px;
+    }    
+
+}

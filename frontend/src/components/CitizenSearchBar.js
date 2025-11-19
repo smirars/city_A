@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Filter } from "lucide-react";
+import { Filter, X } from "lucide-react";
 import CitizenFilters from "./CitizenFilters";
+import "../styles/SearchBar.css"
 
 export default function CitizenSearchBar({ onSearch, onFilterChange }) {
   const [search, setSearch] = useState("");
@@ -12,24 +13,41 @@ export default function CitizenSearchBar({ onSearch, onFilterChange }) {
     onSearch(value);
   };
 
+  const clearSearch = () => {
+    setSearch("");
+    onSearch("");
+  };
+
   return (
-    <div className="relative mb-4 flex items-center gap-2">
-      <input
-        type="text"
-        value={search}
-        onChange={handleSearchChange}
-        placeholder="Поиск по имени или фамилии..."
-        className="border border-gray-300 rounded-md p-2 w-full"
-      />
-      <button
-        onClick={() => setFiltersOpen((v) => !v)}
-        className="p-2 rounded-md bg-gray-200 hover:bg-gray-300"
-      >
-        <Filter size={18} />
-      </button>
+    <div className="searchbar">
+      <div className="container">
+        <div className="searchbar__input-wrapper floating-label">
+          <input
+            type="text"
+            value={search}
+            onChange={handleSearchChange}
+            className={`searchbar__input ${search ? "has-value" : ""}`}
+            required
+          />
+          <label className="searchbar__label">Поиск</label>
+
+          {search !== "" && (
+            <button className="searchbar__clear" onClick={clearSearch}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+        <button
+          onClick={() => setFiltersOpen((v) => !v)}
+          className="searchbar__filter-btn"
+        >
+          <Filter size={18} />
+        </button>
+      </div>
 
       {filtersOpen && (
-        <div className="absolute top-full right-0 bg-white shadow-lg rounded-md p-4 mt-2 w-[350px] z-10">
+        <div className="searchbar__filters">
           <CitizenFilters onFilterChange={onFilterChange} />
         </div>
       )}

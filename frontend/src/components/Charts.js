@@ -14,8 +14,9 @@ import {
   Line,
 } from "recharts";
 import { fetchStatistics } from "../api/citizens";
+import "../styles/Charts.css";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#A28EFF", "#FF6F91"];
+const COLORS = ["#6b8bfa", "#4fd4bc", "#ffce73", "#ff8b6a", "#b38aff", "#ff6fae"];
 
 export default function Charts() {
   const [stats, setStats] = useState({
@@ -35,66 +36,75 @@ export default function Charts() {
     loadStats();
   }, []);
 
-  const renderPieChart = (data = [], title) => (
-    <div style={{ marginBottom: "40px" }}>
-      <h3>{title}</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <PieChart>
-          <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label>
-            {data.map((entry, index) => (
-              <Cell key={index} fill={COLORS[index % COLORS.length]} />
-            ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-      </ResponsiveContainer>
+  const renderCard = (title, content) => (
+    <div className="chart-card">
+      <h3 className="chart-card__title">{title}</h3>
+      <div className="chart-card__content">{content}</div>
     </div>
   );
 
+  const renderPie = (data, title) =>
+    renderCard(
+      title,
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart>
+          <Pie data={data} dataKey="value" cx="50%" cy="50%" outerRadius={110}>
+            {data.map((_, i) => (
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip
+            contentStyle={{ background: "#2a2f4a", border: "none", color: "#e9ecf5" }}
+            labelStyle={{ color: "#e9ecf5" }}
+            itemStyle={{ color: "#e9ecf5" }}
+          />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    );
+
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>Статистика жителей города A</h2>
+    <div className="charts-page">
+      <h2 className="charts-page__title">Статистика жителей города A</h2>
 
-      {renderPieChart(stats.districts, "Распределение по районам")}
-      {renderPieChart(stats.companies, "Распределение по компаниям")}
-      {renderPieChart(stats.schools, "Распределение по школам")}
-      {renderPieChart(stats.universities, "Распределение по вузам")}
+      {renderPie(stats.districts, "Распределение по районам")}
+      {renderPie(stats.companies, "Распределение по компаниям")}
+      {renderPie(stats.schools, "Распределение по школам")}
+      {renderPie(stats.universities, "Распределение по вузам")}
 
-      <div>
-        <h3>Возрастные группы</h3>
+      {renderCard(
+        "Возрастные группы",
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={stats.ages}>
-            <XAxis dataKey="range" />
-            <YAxis />
-            <Tooltip />
+            <XAxis dataKey="range" name="Количество" stroke="#d0d3e0" />
+            <YAxis stroke="#d0d3e0" />
+            <Tooltip contentStyle={{ background: "#2a2f4a", border: "none" }} />
             <Legend />
-            <Bar dataKey="count" fill="#8884d8" />
+            <Bar dataKey="count" name="Количество" fill="#6b8bfa" />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      )}
 
-      <div style={{ marginTop: "40px" }}>
-        <h3>Распределение по годам рождения</h3>
+      {renderCard(
+        "Распределение по годам рождения",
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={stats.birthYears}>
-            <XAxis dataKey="year" />
-            <YAxis />
-            <Tooltip />
+            <XAxis dataKey="year" name="Количество" stroke="#d0d3e0" />
+            <YAxis stroke="#d0d3e0" />
+            <Tooltip contentStyle={{ background: "#2a2f4a", border: "none" }} />
             <Legend />
             <Line
               type="monotone"
               dataKey="count"
-              stroke="#0088FE"
+              name="Количество"
+              stroke="#6b8bfa"
               strokeWidth={3}
               dot={{ r: 4 }}
               activeDot={{ r: 6 }}
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
-
+      )}
     </div>
   );
 }

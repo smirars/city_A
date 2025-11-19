@@ -1,0 +1,136 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+
+  width: 80px; 
+  background: #031531;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  padding: 20px 12px;
+  box-sizing: border-box;
+
+  transition: width 0.25s ease, left 0.3s ease;
+  z-index: 1000;
+}
+
+.sidebar--open {
+  width: 240px;
+}
+
+.sidebar--mobile {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  height: 100%;
+  justify-content: start;
+}
+
+.sidebar--mobile.sidebar--open {
+  left: 0;
+}
+
+.sidebar__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px);
+  z-index: 900;
+}
+
+.sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+  padding: 10px 12px;
+
+  border: none;
+  background: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-size: 18px;
+  color: #2f3542;
+
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.sidebar__item:hover {
+  background: #5b7faf;
+}
+
+.sidebar__item--active {
+  background: #426cac;
+  font-weight: 600;
+}
+
+.sidebar__label {
+  opacity: 0;
+  animation: fadeIn 0.25s forwards;
+  font-size: 16px;
+  color: #b0b0b0;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.sidebar__icon {
+  font-size: 24px;
+  width: 28px;
+  text-align: center;
+}
+
+.sidebar__icon--open {
+  color: #b0b0b0;
+  position: relative;
+  bottom: 2px;
+}
+
+.sidebar__collapse {
+  margin-top: auto;
+  margin-bottom: 10px;
+}
+
+.sidebar__burger {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+
+  width: 50px;
+  height: 50px;
+
+  background: #031531;
+  color: #b0b0b0;
+  border: none;
+  border-radius: 8px;
+
+  font-size: 26px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+
+  z-index: 1100;
+}
+
+.sidebar__close {
+  font-size: 22px;
+  align-self: flex-end;
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  margin-bottom: 20px;
+  color: #b0b0b0;
+}

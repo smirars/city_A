@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import "../styles/Filters.css"
 export default function CitizenFilters({ onFilterChange }) {
   const [filters, setFilters] = useState({
     gender: "all",
@@ -35,56 +35,81 @@ export default function CitizenFilters({ onFilterChange }) {
     onFilterChange(updated);
   };
 
+  const handleReset = () => {
+    const resetValues = {
+      gender: "all",
+      marital_status: "all",
+      minAge: "",
+      maxAge: "",
+      company: "",
+      school: "",
+      university: "",
+    };
+
+    setFilters(resetValues);
+    onFilterChange(resetValues);
+  };
+
   return (
-    <div className="space-y-3 text-sm text-gray-700">
-      <div>
-        <strong>Пол:</strong>
-        <div className="flex gap-2 mt-1">
+    <div className="filters">
+
+      <div className="filters__group">
+        <div className="filters__label">Пол:</div>
+
+        <div className="filters__options">
           {["all", "male", "female"].map((g) => (
-            <label key={g}>
+            <label key={g} className="filters__option">
               <input
                 type="radio"
                 name="gender"
                 value={g}
                 checked={filters.gender === g}
                 onChange={(e) => handleChange("gender", e.target.value)}
+                className="filters__radio"
               />
-              {" "}{g === "all" ? "Все" : g === "male" ? "Мужчины" : "Женщины"}
+              <span className="filters__text">
+                {g === "all" ? "Все" : g === "male" ? "Мужчины" : "Женщины"}
+              </span>
             </label>
           ))}
         </div>
       </div>
 
-      <div>
-        <strong>Семейное положение:</strong>
-        <div className="flex gap-2 mt-1">
+      <div className="filters__group">
+        <div className="filters__label">Семейное положение:</div>
+
+        <div className="filters__options">
           {["all", "single", "married"].map((m) => (
-            <label key={m}>
+            <label key={m} className="filters__option">
               <input
                 type="radio"
                 name="marital"
                 value={m}
                 checked={filters.marital_status === m}
                 onChange={(e) => handleChange("marital_status", e.target.value)}
+                className="filters__radio"
               />
-              {" "}{m === "all" ? "Все" : m === "single" ? "Не женаты" : "Женаты"}
+              <span className="filters__text">
+                {m === "all" ? "Все" : m === "single" ? "Не женаты" : "Женаты"}
+              </span>
             </label>
           ))}
         </div>
       </div>
 
-      <div className="flex gap-2">
+      <div className="filters__group filters__group--row">
         <input
           type="number"
           placeholder="Мин. возраст"
-          className="border rounded-md p-1 w-1/2"
+          className="filters__input"
           value={filters.minAge}
           onChange={(e) => handleChange("minAge", e.target.value)}
         />
+
         <input
           type="number"
           placeholder="Макс. возраст"
-          className="border rounded-md p-1 w-1/2"
+          className="filters__input"
           value={filters.maxAge}
           onChange={(e) => handleChange("maxAge", e.target.value)}
         />
@@ -92,32 +117,37 @@ export default function CitizenFilters({ onFilterChange }) {
 
       {["company", "school", "university"].map((field) => {
         const keyMap = {
-            company: "companies",
-            school: "schools",
-            university: "universities",
+          company: "companies",
+          school: "schools",
+          university: "universities",
         };
         const list = options[keyMap[field]] || [];
 
         return (
-            <div key={field}>
+          <div className="filters__group" key={field}>
             <select
-                className="border rounded-md p-1 w-full"
-                value={filters[field]}
-                onChange={(e) => handleChange(field, e.target.value)}
+              className="filters__select"
+              value={filters[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
             >
-                <option value="">
-                Все {field === "company" ? "компании" : field === "school" ? "школы" : "вузы"}
-                </option>
-                {list.map((o) => (
-                <option key={o.id} value={o.name}>
-                    {o.name}
-                </option>
-                ))}
+              <option value="">
+                Все{" "}
+                {field === "company" ? "компании" : field === "school" ? "школы" : "вузы"}
+              </option>
+
+              {list.map((o) => (
+                <option key={o.id} value={o.name}>{o.name}</option>
+              ))}
             </select>
-            </div>
+          </div>
         );
-        })}
+      })}
+
+      <button className="filters__reset" onClick={handleReset}>
+        Сбросить фильтры
+      </button>
 
     </div>
   );
+
 }

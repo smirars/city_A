@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import "../styles/CreateCitizenPage.css";
+import { PatternFormat } from "react-number-format";
+import SuccessModal from "../components/SuccessModal";
 
 export default function CreateCitizenPage() {
   const [form, setForm] = useState({
@@ -15,6 +18,12 @@ export default function CreateCitizenPage() {
     university_id: "",
   });
 
+  const [errors, setErrors] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const today = new Date().toISOString().split("T")[0];
+
   const [options, setOptions] = useState({
     companies: [],
     schools: [],
@@ -23,6 +32,7 @@ export default function CreateCitizenPage() {
 
   const handleChange = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
+    setErrors(prev => ({ ...prev, [field]: false }));
   };
 
   useEffect(() => {
@@ -38,7 +48,25 @@ export default function CreateCitizenPage() {
     loadOptions();
   }, []);
 
+  const validate = () => {
+    const newErrors = {};
+
+    ["first_name", "last_name", "phone", "email"].forEach(f => {
+      if (!form[f].trim()) newErrors[f] = "required";
+    });
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
+    if (form.email && !emailRegex.test(form.email)) {
+      newErrors.email = "invalid";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const createCitizen = async () => {
+    if (!validate()) return;
+
     const res = await fetch("http://localhost:3001/citizens", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,148 +76,173 @@ export default function CreateCitizenPage() {
     const data = await res.json();
 
     if (data.error) {
-      alert("Ошибка: " + data.error);
+      setModalMessage("Ошибка: " + data.error);
+      setModalOpen(true);
     } else {
-      alert("Житель успешно создан!");
+      setModalMessage("Житель успешно создан!");
+      setModalOpen(true);
+      setForm({
+        first_name: "",
+        last_name: "",
+        middle_name: "",
+        gender: "male",
+        birth_date: "",
+        phone: "",
+        email: "",
+        marital_status: "single",
+        company_id: "",
+        school_id: "",
+        university_id: "",
+      })
     }
   };
 
   return (
-    <div className="max-w-lg mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Создать нового жителя</h2>
+    <div className="create">
+      <h2 className="create__title">Создать нового жителя</h2>
 
-      <div className="space-y-3">
+      <div className="create__form">
 
-        <input
-          className="border rounded p-2 w-full"
-          placeholder="Имя"
-          value={form.first_name}
-          onChange={(e) => handleChange("first_name", e.target.value)}
-        />
+        <div className={`create__field ${errors.first_name ? "create__field--error" : ""}`}>
+          <input
+            className="create__input"
+            value={form.first_name}
+            onChange={(e) => handleChange("first_name", e.target.value)}
+            required
+            placeholder=" "
+          />
+          <label className="create__label-floating">Имя *</label>
+        </div>
 
-        <input
-          className="border rounded p-2 w-full"
-          placeholder="Фамилия"
-          value={form.last_name}
-          onChange={(e) => handleChange("last_name", e.target.value)}
-        />
+        <div className={`create__field ${errors.last_name ? "create__field--error" : ""}`}>
+          <input
+            className="create__input"
+            value={form.last_name}
+            onChange={(e) => handleChange("last_name", e.target.value)}
+            required
+            placeholder=" "
+          />
+          <label className="create__label-floating">Фамилия *</label>
+        </div>
 
-        <input
-          className="border rounded p-2 w-full"
-          placeholder="Отчество (если есть)"
-          value={form.middle_name}
-          onChange={(e) => handleChange("middle_name", e.target.value)}
-        />
+        <div className="create__field">
+          <input
+            className="create__input"
+            value={form.middle_name}
+            onChange={(e) => handleChange("middle_name", e.target.value)}
+            placeholder=" "
+          />
+          <label className="create__label-floating">Отчество</label>
+        </div>
 
-        <input
-          type="date"
-          className="border rounded p-2 w-full"
-          value={form.birth_date}
-          onChange={(e) => handleChange("birth_date", e.target.value)}
-        />
+        <div className="create__field">
+          <input
+            type="date"
+            className="create__input create__input--date"
+            value={form.birth_date}
+            onChange={(e) => handleChange("birth_date", e.target.value)}
+            max={today}
+          />
+          <label className="create__label-floating create__label-floating--active">Дата рождения</label>
+        </div>
 
-        <input
-          className="border rounded p-2 w-full"
-          placeholder="Телефон"
-          value={form.phone}
-          onChange={(e) => handleChange("phone", e.target.value)}
-        />
+       <div className={`create__field ${errors.phone ? "create__field--error" : ""}`}>
+          <PatternFormat
+            format="+7 (###) ###-##-##"
+            mask="_"
+            value={form.phone}
+            onValueChange={(values) => handleChange("phone", values.value)}
+            className={`create__input ${errors.phone ? "create__input--error" : ""}`}
+            placeholder=" "
+          />
+          <label className="create__label-floating">Телефон *</label>
+        </div>
 
-        <input
-          className="border rounded p-2 w-full"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => handleChange("email", e.target.value)}
-        />
 
-        <div>
-          <strong>Пол:</strong>
-          <div className="flex gap-4 mt-1">
-            <label>
+        <div className={`create__field ${errors.email ? "create__field--error" : ""}`}>
+          <input
+            className="create__input"
+            value={form.email}
+            onChange={(e) => handleChange("email", e.target.value)}
+            required
+            placeholder=" "
+          />
+          <label className="create__label-floating">Email *</label>
+        </div>
+
+        <div className="create__field-block">
+          <span className="create__label">Пол:</span>
+          <div className="create__radio-group">
+
+            <label className="create__radio-item">
               <input
                 type="radio"
                 name="gender"
                 value="male"
                 checked={form.gender === "male"}
                 onChange={() => handleChange("gender", "male")}
+                className="create__radio"
               />
-              Мужской
+              <span className="create__radio-label">Мужской</span>
             </label>
 
-            <label>
+            <label className="create__radio-item">
               <input
                 type="radio"
                 name="gender"
                 value="female"
                 checked={form.gender === "female"}
                 onChange={() => handleChange("gender", "female")}
+                className="create__radio"
               />
-              Женский
+              <span className="create__radio-label">Женский</span>
             </label>
+
           </div>
         </div>
 
-        <div>
-          <strong>Семейное положение:</strong>
-          <select
-            className="border p-2 rounded w-full"
-            value={form.marital_status}
-            onChange={(e) => handleChange("marital_status", e.target.value)}
-          >
-            <option value="single">Не женат / Не замужем</option>
-            <option value="married">Женат / Замужем</option>
-          </select>
-        </div>
+        {[
+          { label: "Семейное положение", field: "marital_status", options: [
+            { value: "single", text: "Не женат / Не замужем" },
+            { value: "married", text: "Женат / Замужем" }
+          ]},
+          { label: "Компания", field: "company_id", options: options.companies },
+          { label: "Школа", field: "school_id", options: options.schools },
+          { label: "Вуз", field: "university_id", options: options.universities },
+        ].map(({ label, field, options }) => (
+          <div className="create__field-block" key={field}>
+            <span className="create__label">{label}:</span>
 
-        <div>
-          <strong>Компания:</strong>
-          <select
-            className="border p-2 rounded w-full"
-            value={form.company_id}
-            onChange={(e) => handleChange("company_id", e.target.value)}
-          >
-            <option value="">Нет</option>
-            {options.companies.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-        </div>
+            <select
+              className="create__select"
+              value={form[field]}
+              onChange={(e) => handleChange(field, e.target.value)}
+            >
+              <option value="">Нет</option>
 
-        <div>
-          <strong>Школа:</strong>
-          <select
-            className="border p-2 rounded w-full"
-            value={form.school_id}
-            onChange={(e) => handleChange("school_id", e.target.value)}
-          >
-            <option value="">Нет</option>
-            {options.schools.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-        </div>
+              {options.map((o) => (
+                <option
+                  key={o.id ?? o.value}      
+                  value={o.id ?? o.value}   
+                >
+                  {o.name ?? o.text}          
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
 
-        <div>
-          <strong>Вуз:</strong>
-          <select
-            className="border p-2 rounded w-full"
-            value={form.university_id}
-            onChange={(e) => handleChange("university_id", e.target.value)}
-          >
-            <option value="">Нет</option>
-            {options.universities.map((u) => (
-              <option key={u.id} value={u.id}>{u.name}</option>
-            ))}
-          </select>
-        </div>
 
-        <button
-          onClick={createCitizen}
-          className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600"
-        >
+        <button onClick={createCitizen} className="create__submit">
           Создать жителя
         </button>
       </div>
+      <SuccessModal
+        open={modalOpen}
+        message={modalMessage}
+        onClose={() => setModalOpen(false)}
+      />
+
     </div>
   );
 }

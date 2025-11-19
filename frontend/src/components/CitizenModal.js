@@ -1,42 +1,55 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import "../styles/modal.css";
 
 export default function CitizenModal({ citizen, onClose, onSelectCitizen }) {
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    if (citizen) setClosing(false);
+  }, [citizen]);
+
+  const handleClose = () => {
+    setClosing(true);
+    setTimeout(onClose, 250); 
+  };
+
   if (!citizen) return null;
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-      onClick={onClose}
-    >
+    <div className={`modal ${closing ? "fade-out" : ""}`} onClick={handleClose}>
       <div
-        className="bg-white p-6 rounded-lg shadow-lg w-[400px] max-h-[80vh] overflow-y-auto"
+        className={`modal__window ${closing ? "fade-out" : "fade-in"}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-4">
+        <div className={`modal__avatar ${closing ? "fade-out-avatar" : "fade-in-avatar"}`}>
+          
+        </div>
+
+        <h2 className="modal__title">
           {citizen.last_name} {citizen.first_name} {citizen.middle_name}
         </h2>
 
-        <div className="space-y-2 text-gray-700">
-          <p><strong>Пол:</strong> {citizen.gender === "male" ? "Мужской" : "Женский"}</p>
-          <p><strong>Дата рождения:</strong> {new Date(citizen.birth_date).toLocaleDateString()}</p>
-          <p><strong>Телефон:</strong> {citizen.phone}</p>
-          <p><strong>Email:</strong> {citizen.email}</p>
-          <p><strong>Семейное положение:</strong> {citizen.marital_status === "married" ? "Женат / Замужем" : "Не женат / Не замужем"}</p>
+        <div className="modal__content">
+          <p className="modal__row"><strong>Пол:</strong> {citizen.gender === "male" ? "Мужской" : "Женский"}</p>
+          <p className="modal__row"><strong>Дата рождения:</strong> {new Date(citizen.birth_date).toLocaleDateString()}</p>
+          <p className="modal__row"><strong>Телефон:</strong> {citizen.phone}</p>
+          <p className="modal__row"><strong>Email:</strong> {citizen.email}</p>
+          <p className="modal__row"><strong>Семейное положение:</strong> {citizen.marital_status === "married" ? "Женат / Замужем" : "Не женат / Не замужем"}</p>
 
-          {citizen.company && <p><strong>Компания:</strong> {citizen.company}</p>}
-          {citizen.school && <p><strong>Школа:</strong> {citizen.school}</p>}
-          {citizen.university && <p><strong>ВУЗ:</strong> {citizen.university}</p>}
-          {citizen.district && <p><strong>Район:</strong> {citizen.district}</p>}
+          {citizen.company && <p className="modal__row"><strong>Компания:</strong> {citizen.company}</p>}
+          {citizen.school && <p className="modal__row"><strong>Школа:</strong> {citizen.school}</p>}
+          {citizen.university && <p className="modal__row"><strong>ВУЗ:</strong> {citizen.university}</p>}
+          {citizen.district && <p className="modal__row"><strong>Район:</strong> {citizen.district}</p>}
 
-          {citizen.relatives && citizen.relatives.length > 0 && (
-            <div className="mt-4">
+          {citizen.relatives?.length > 0 && (
+            <div className="modal__relatives">
               <strong>Родственники:</strong>
-              <ul className="mt-2 space-y-1">
+              <ul className="modal__relatives-list">
                 {citizen.relatives.map((rel) => (
-                  <li key={rel.id}>
+                  <li key={rel.id} className="modal__relatives-item">
                     <button
                       onClick={() => onSelectCitizen(rel.id)}
-                      className="text-blue-600 hover:underline"
+                      className="modal__relatives-link"
                     >
                       {rel.last_name} {rel.first_name} {rel.middle_name} ({rel.relation})
                     </button>
@@ -47,12 +60,7 @@ export default function CitizenModal({ citizen, onClose, onSelectCitizen }) {
           )}
         </div>
 
-        <button
-          onClick={onClose}
-          className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-        >
-          Закрыть
-        </button>
+        <button className="modal__close" onClick={handleClose}>Закрыть</button>
       </div>
     </div>
   );
