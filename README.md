@@ -10,6 +10,12 @@
 cd backend
 ```
 
+Установите зависимости:
+
+```bash
+npm install
+```
+
 Запустите сервер:
 
 ```bash
@@ -28,6 +34,12 @@ Backend running on port 3001
 
 ```bash
 cd frontend
+```
+
+Установите зависимости:
+
+```bash
+npm install
 ```
 
 Запустите клиент:
